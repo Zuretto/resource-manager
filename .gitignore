@@ -37,3 +37,6 @@ nb-configuration.xml
 
 # Local environment
 .env
+
+# private and public keys
+jwt/
