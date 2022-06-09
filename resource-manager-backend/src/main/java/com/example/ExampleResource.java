@@ -13,4 +13,5 @@ public class ExampleResource {
     public String hello() {
         return "Hello from RESTEasy Reactive";
     }
+
 }
