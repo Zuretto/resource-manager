@@ -1,7 +1,18 @@
 package com.example.auth.entity;
 
 
-import javax.persistence.*;
+import com.example.resource.entity.Resource;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @NamedQueries({
@@ -11,6 +22,9 @@ import javax.persistence.*;
                         "AND user.passwordHash = :passwordHash"),
         @NamedQuery(name = "Users.findByLogin",
                 query = "SELECT user FROM User user " +
+                        "WHERE user.userName = :userName"),
+        @NamedQuery(name = "Users.findByLoginWithResources",
+                query = "SELECT user FROM User user JOIN FETCH user.resources " +
                         "WHERE user.userName = :userName"),
         @NamedQuery(name = "Users.findByEmail",
                 query = "SELECT user FROM User user " +
@@ -41,7 +55,13 @@ public class User {
     @Column(name = "FAVORITE_CHARACTER", length = 32)
     private String favoriteCharacter;
 
-    public User() {}
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Resource> resources;
+
+    public User() {
+    }
 
     public User(String userName, String passwordHash, String email, String favoriteCharacter) {
         this.userName = userName;
@@ -56,5 +76,26 @@ public class User {
 
     public Long getId() {
         return id;
+    }
+
+    public List<Resource> getResources() {
+        return resources;
+    }
+
+    public void addResource(Resource resource) {
+        this.resources.add(resource);
+        resource.setUser(this);
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getFavoriteCharacter() {
+        return favoriteCharacter;
     }
 }

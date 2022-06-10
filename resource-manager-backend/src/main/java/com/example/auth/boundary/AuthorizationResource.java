@@ -43,7 +43,7 @@ public class AuthorizationResource {
 
         User user = userService.findUserByLoginAndPassword(login, password);
 
-        String encodedToken = jwtService.encodeToken(user.getId().toString());
+        String encodedToken = jwtService.encodeToken(user.getUserName());
         return Response.ok(new AuthorizationInformation()
                         .withExpiresIn(1200L)
                         .withAccessToken(encodedToken))
