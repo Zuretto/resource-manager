@@ -1,0 +1,9 @@
+.login--form {
+    display:flex;
+    flex-direction: column;
+}
+
+.error--paragraph {
+    color: darkred;
+    font-weight: 600;
+}
