@@ -1,18 +1,19 @@
-import './LoginForm.css';
-import { useNavigate } from 'react-router-dom';
+import './AuthStyles.css';
+import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { ACTION_TYPES } from '../state/reducer';
 import { createRef, useState } from 'react';
 
 const LoginForm = () => {
-    const navigate = useNavigate();
 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const loginInputRef = createRef();
-    const passwordInputRef = createRef();
 
     const [errorMessage, setErrorMessage] = useState('');
+
+    const loginInputRef = createRef();
+    const passwordInputRef = createRef();
 
     const performLogin = () => {
         const userName = loginInputRef.current.value;
@@ -30,15 +31,20 @@ const LoginForm = () => {
                         login: userName,
                     },
                 });
-                navigate(`resources/${userName}`);
+                navigate(`/resources/${userName}`);
             })
             .catch((_axiosError) => {
                 setErrorMessage(() => 'Wrong credentials.');
             });
     };
 
+    const redirectToRegister = () => {
+        navigate(`/register-form`);
+    }
+
     return (
         <div className="login--form">
+
             <label>
                 <input placeholder="login" ref={loginInputRef}></input>
             </label>
@@ -46,14 +52,20 @@ const LoginForm = () => {
                 <input type="password" placeholder="password" ref={passwordInputRef}></input>
             </label>
             <span>
-        <button onClick={() => performLogin()}> Sign in </button>
-      </span>
-            {errorMessage && (
-                <p className="error--paragraph"> {errorMessage} </p>
-            )}
-            {/* <span>
-                <Link to='resources/user'>halo</Link>
-            </span>*/}
+                <button onClick={() => performLogin()}> Sign in </button>
+                <button onClick={() => redirectToRegister()}> Register </button>
+            </span>
+            {
+                errorMessage
+                    ? (<p className="error--paragraph"> {errorMessage} </p>)
+                    : ''
+            }
+            <span>
+                Don't have an account? <Link to='/register-form'>Register</Link>.
+            </span>
+            <span>
+                Password forgotten? <Link to='/reset-password'>Reset</Link>.
+            </span>
         </div>
     );
 }
