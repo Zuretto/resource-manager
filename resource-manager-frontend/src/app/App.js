@@ -4,6 +4,7 @@ import ResourcesList from "../resources-list/ResourcesList";
 import LoginForm from "../auth/LoginForm";
 import RegisterForm from "../auth/RegisterForm";
 import { useSelector } from 'react-redux';
+import ResetPasswordForm from "../auth/ResetPasswordForm";
 
 function App() {
 
@@ -21,8 +22,10 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<LoginForm/>}/>
-                    <Route path="resources/:userName" element={<ResourcesList/>}/>
                     <Route path="/register-form" element={<RegisterForm/>}/>
+                    <Route path="/reset-password" element={<ResetPasswordForm />}/>
+
+                    <Route path="resources/:userName" element={<ResourcesList/>}/>
                 </Routes>
             </BrowserRouter>
         </div>
