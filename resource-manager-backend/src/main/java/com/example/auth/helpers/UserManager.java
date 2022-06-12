@@ -78,6 +78,26 @@ public class UserManager {
         em.merge(resource);
     }
 
+    @Transactional
+    public void deleteResource(String userName, String resourceName) {
+        var userOptional = this.findUserByUsernameWithResources(userName);
+
+        if (userOptional.isEmpty()) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
+        var resourceOptional = userOptional.get()
+                .getResources().stream().filter(resource -> resource.getResourceName().equals(resourceName)).findFirst();
+
+        if (resourceOptional.isEmpty()) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
+        em.createNativeQuery("delete from RESOURCES where ID = :id")
+                .setParameter("id", resourceOptional.get().getId())
+                .executeUpdate();
+    }
+
     private User findUserByLoginEmailAndFavoriteCharacter(String userName, String email, String favoriteCharacter) {
         try {
             return em.createNamedQuery("Users.findByLoginEmailAndFavoriteCharacter", User.class)

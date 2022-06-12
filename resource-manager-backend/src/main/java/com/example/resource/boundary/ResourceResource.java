@@ -9,15 +9,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -85,8 +77,8 @@ public class ResourceResource {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadContentOfResource(@PathParam("resourceName") String nameOfResource,
-                                              @PathParam("userName") String userNameFromPath,
-                                              @Body byte[] documentContent) {
+                                            @PathParam("userName") String userNameFromPath,
+                                            @Body byte[] documentContent) {
 
         String userName = jwt.getSubject();
 
@@ -98,4 +90,24 @@ public class ResourceResource {
 
         return Response.accepted().build();
     }
+
+    @DELETE
+    @Path("/resources/{userName}/resource/{resourceName}")
+    @RolesAllowed("user")
+    @Consumes(MediaType.WILDCARD)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteResource(@PathParam("resourceName") String nameOfResource,
+                                            @PathParam("userName") String userNameFromPath) {
+
+        String userName = jwt.getSubject();
+
+        if (!userName.equals(userNameFromPath)) {
+            throw new WebApplicationException(Response.Status.FORBIDDEN);
+        }
+
+        resourceService.deleteResource(userName, nameOfResource);
+
+        return Response.accepted().build();
+    }
+
 }

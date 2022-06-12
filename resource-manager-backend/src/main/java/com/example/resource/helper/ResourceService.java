@@ -70,5 +70,9 @@ public class ResourceService {
         userManager.uploadContentOfResource(resourceOptional.get(), content);
     }
 
+    public void deleteResource(String userName, String nameOfResource) {
+        userManager.deleteResource(userName, nameOfResource);
+    }
+
 
 }
