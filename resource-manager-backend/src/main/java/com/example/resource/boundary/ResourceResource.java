@@ -84,7 +84,7 @@ public class ResourceResource {
     @RolesAllowed("user")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response uploadMetadataForResource(@PathParam("resourceName") String nameOfResource,
+    public Response uploadContentOfResource(@PathParam("resourceName") String nameOfResource,
                                               @PathParam("userName") String userNameFromPath,
                                               @Body byte[] documentContent) {
 
