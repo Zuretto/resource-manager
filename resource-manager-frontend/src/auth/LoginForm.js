@@ -3,17 +3,22 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { ACTION_TYPES } from '../state/reducer';
-import { createRef, useState } from 'react';
+import { createRef } from 'react';
 
 const LoginForm = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const [errorMessage, setErrorMessage] = useState('');
-
     const loginInputRef = createRef();
     const passwordInputRef = createRef();
+
+    const _setErrorMessage = (text) => {
+        dispatch({ type: ACTION_TYPES.SET_ERROR_MESSAGE, payload: { errorMessage: text } });
+        setTimeout(() => {
+            dispatch({ type: ACTION_TYPES.SET_ERROR_MESSAGE, payload: { errorMessage: '' } });
+        }, 15000);
+    }
 
     const performLogin = () => {
         const userName = loginInputRef.current.value;
@@ -34,7 +39,7 @@ const LoginForm = () => {
                 navigate(`/resources/${userName}`);
             })
             .catch((_axiosError) => {
-                setErrorMessage(() => 'Wrong credentials.');
+                _setErrorMessage('Wrong credentials.');
             });
     };
 
@@ -43,7 +48,7 @@ const LoginForm = () => {
     }
 
     return (
-        <div className="login--form">
+        <div className="form">
 
             <label>
                 <input placeholder="login" ref={loginInputRef}></input>
@@ -55,11 +60,6 @@ const LoginForm = () => {
                 <button onClick={() => performLogin()}> Sign in </button>
                 <button onClick={() => redirectToRegister()}> Register </button>
             </span>
-            {
-                errorMessage
-                    ? (<p className="error--paragraph"> {errorMessage} </p>)
-                    : ''
-            }
             <span>
                 Don't have an account? <Link to='/register-form'>Register</Link>.
             </span>

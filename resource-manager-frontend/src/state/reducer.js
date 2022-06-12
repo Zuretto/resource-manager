@@ -1,12 +1,15 @@
 const initialState = {
     accessToken: '',
     isLoggedIn: false,
-    statusMessage: ''
+    userLogin: '',
+    statusMessage: '',
+    errorMessage: ''
 }
 
 export const ACTION_TYPES = {
     LOGIN_USER: 'auth/userLoggedIn',
-    SET_STATUS_MESSAGE: 'global/statusMessage'
+    SET_STATUS_MESSAGE: 'global/statusMessage',
+    SET_ERROR_MESSAGE: 'global/errorMessage'
 }
 
 export default function generalReducer(state = initialState, action) {
@@ -23,6 +26,13 @@ export default function generalReducer(state = initialState, action) {
             return {
                 ...state,
                 statusMessage: action.payload.statusMessage
+            }
+        }
+
+        case ACTION_TYPES.SET_ERROR_MESSAGE: {
+            return {
+                ...state,
+                errorMessage: action.payload.errorMessage
             }
         }
         default:

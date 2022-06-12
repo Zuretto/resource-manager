@@ -28,6 +28,11 @@
   color: #61dafb;
 }
 
+body {
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -39,5 +44,10 @@
 
 .status--paragraph {
   color: yellowgreen;
+  font-weight: 600;
+}
+
+.error--paragraph {
+  color: darkred;
   font-weight: 600;
 }

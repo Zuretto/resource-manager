@@ -1,9 +1,9 @@
 import './AuthStyles.css';
+import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import axios from 'axios';
 import { ACTION_TYPES } from '../state/reducer';
-import { createRef, useState } from 'react';
+import { createRef } from 'react';
 
 
 const RegisterForm = () => {
@@ -16,7 +16,6 @@ const RegisterForm = () => {
     const favoriteCharacterInputRef = createRef();
 
     const dispatch = useDispatch();
-    const [errorMessage, setErrorMessage] = useState('');
 
     const _isTextValid = (text) => text && !/\s/.test(text);
 
@@ -27,6 +26,13 @@ const RegisterForm = () => {
         }, 15000);
     }
 
+    const _setErrorMessage = (text) => {
+        dispatch({ type: ACTION_TYPES.SET_ERROR_MESSAGE, payload: { errorMessage: text } });
+        setTimeout(() => {
+            dispatch({ type: ACTION_TYPES.SET_ERROR_MESSAGE, payload: { errorMessage: '' } });
+        }, 15000);
+    }
+
     const performRegister = () => {
         const userName = loginInputRef.current.value;
         const password = passwordInputRef.current.value;
@@ -34,7 +40,7 @@ const RegisterForm = () => {
         const favoriteCharacter = favoriteCharacterInputRef.current.value;
 
         if (!_isTextValid(userName) || !password || !_isTextValid(email) || !favoriteCharacter) {
-            setErrorMessage(() => 'Invalid data - please fill all input fields and do not use whitespaces on userName or email.')
+            _setErrorMessage('Invalid data - please fill all input fields and do not use whitespaces on userName or email.');
             return;
         }
 
@@ -52,12 +58,12 @@ const RegisterForm = () => {
                 navigate(`/`);
             })
             .catch((_axiosError) => {
-                setErrorMessage(() => 'User with such email or login already exists.');
+                _setErrorMessage('User with such email or login already exists.');
             });
     };
 
     return (
-        <div className="login--form">
+        <div className="form">
             <label>
                 <input placeholder="login" ref={loginInputRef}></input>
             </label>
@@ -73,11 +79,6 @@ const RegisterForm = () => {
             <span>
                 <button onClick={() => performRegister()}> Register </button>
             </span>
-            {
-                errorMessage
-                    ? (<p className="error--paragraph"> {errorMessage} </p>)
-                    : ''
-            }
             <span>
                 <Link to='/'>Return to login</Link>.
             </span>

@@ -1,6 +1,8 @@
-import { useParams } from "react-router-dom";
+import './ResourcesStyles.css';
+import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import ResourcesRow from "./ResourcesRow";
 
 const ResourcesList = () => {
 
@@ -24,9 +26,15 @@ const ResourcesList = () => {
     return (
         <>
             <h3> Resources of user: {userName} </h3>
+            <Link to='create-resource'><p className="add_new"> add new </p></Link>
+            <div className="resources--row--header">
+                <p> image </p>
+                <p> name of resource </p>
+                <p> owner </p>
+            </div>
             {
                 resourceMetadatas.map(resourceMetadata => {
-                    return <h2 key={resourceMetadata.resourceName}>{resourceMetadata.resourceName}</h2>
+                    return <ResourcesRow key={resourceMetadata.resourceName} resource={resourceMetadata}/>
                 })
             }
         </>
