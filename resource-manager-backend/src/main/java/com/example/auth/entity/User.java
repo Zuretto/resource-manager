@@ -24,7 +24,7 @@ import java.util.List;
                 query = "SELECT user FROM User user " +
                         "WHERE user.userName = :userName"),
         @NamedQuery(name = "Users.findByLoginWithResources",
-                query = "SELECT user FROM User user JOIN FETCH user.resources " +
+                query = "SELECT user FROM User user LEFT JOIN FETCH user.resources " +
                         "WHERE user.userName = :userName"),
         @NamedQuery(name = "Users.findByEmail",
                 query = "SELECT user FROM User user " +
