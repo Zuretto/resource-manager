@@ -65,10 +65,10 @@ const RegisterForm = () => {
                 <button onClick={() => performRegister()}> Register </button>
             </span>
             <span>
-                <Link to='/'>Return to login</Link>.
+                <Link className="link"  to='/'>Return to login</Link>.
             </span>
             <span>
-                Password forgotten? <Link to='/reset-password'>Reset</Link>.
+                Password forgotten? <Link className="link"  to='/reset-password'>Reset</Link>.
             </span>
         </div>
     );

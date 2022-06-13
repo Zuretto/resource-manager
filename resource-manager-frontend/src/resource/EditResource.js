@@ -159,16 +159,18 @@ const EditResource = () => {
     return (
         <Fragment>
             <h2>Resource {resourceName} of user {userName}</h2>
-            {
-                isAllowedToEdit()
-                    ? <button onClick={() => saveTheResourceToDatabase()}>Save the resource</button>
-                    : ''
-            }
-            {
-                isAllowedToEdit()
-                    ? <button onClick={() => deleteResourceFromDatabase()}>Delete the resource</button>
-                    : ''
-            }
+            <span className="buttons--container">
+                {
+                    isAllowedToEdit()
+                        ? <button onClick={() => saveTheResourceToDatabase()}>Save the resource</button>
+                        : ''
+                }
+                {
+                    isAllowedToEdit()
+                        ? <button onClick={() => deleteResourceFromDatabase()}>Delete the resource</button>
+                        : ''
+                }
+            </span>
             <div id="editorjs_id"></div>
         </Fragment>
     );

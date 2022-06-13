@@ -50,15 +50,15 @@ const LoginForm = () => {
             <label>
                 <input type="password" placeholder="password" ref={passwordInputRef}></input>
             </label>
-            <span>
+            <span className="buttons--container">
                 <button onClick={() => performLogin()}> Sign in </button>
                 <button onClick={() => redirectToRegister()}> Register </button>
             </span>
             <span>
-                Don't have an account? <Link to='/register-form'>Register</Link>.
+                Don't have an account? <Link className="link"  to='/register-form'>Register</Link>.
             </span>
             <span>
-                Password forgotten? <Link to='/reset-password'>Reset</Link>.
+                Password forgotten? <Link className="link"  to='/reset-password'>Reset</Link>.
             </span>
         </div>
     );

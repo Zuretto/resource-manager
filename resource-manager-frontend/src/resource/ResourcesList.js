@@ -26,7 +26,7 @@ const ResourcesList = () => {
     return (
         <>
             <h3> Resources of user: {userName} </h3>
-            <Link to='create-resource'><p className="add_new"> add new </p></Link>
+            <p className="add_new"><Link className="link" to='create-resource'> add new </Link></p>
             <div className="resources--row--header">
                 <p> image </p>
                 <p> name of resource </p>
