@@ -6,7 +6,7 @@ const ResourcesRow = (props) => {
     const navigate = useNavigate();
 
     const redirectToPage = () => {
-        navigate(`/resources/${props.resource.resourceOwner}/resource/${props.resource.resourceName}/edit`);
+        navigate(`/resources/${props.resource.resourceOwner}/resource/${props.resource.resourceName}`);
     }
 
     return (

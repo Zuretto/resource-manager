@@ -1,11 +1,11 @@
 import './ResourcesStyles.css';
-import { default as React, useEffect, useRef } from 'react';
-import { useParams } from "react-router-dom";
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import axios from 'axios';
-import { ACTION_TYPES } from "../state/reducer";
+import { setErrorMessage, setStatusMessage } from "../utils/utils";
 
 const DEFAULT_INITIAL_DATA = () => {
     return {
@@ -25,7 +25,8 @@ const DEFAULT_INITIAL_DATA = () => {
 const EditResource = () => {
 
     const ejInstance = useRef();
-    const [editorData, setEditorData] = React.useState(DEFAULT_INITIAL_DATA);
+    const [editorData, setEditorData] = useState(DEFAULT_INITIAL_DATA);
+    const navigate = useNavigate();
 
     const isLoggedIn = useSelector((state) => state.isLoggedIn);
     const loginOfLoggedInUser = useSelector((state) => state.userLogin);
@@ -35,32 +36,22 @@ const EditResource = () => {
 
     const dispatch = useDispatch();
 
-    const _setStatusMessage = (text) => {
-        dispatch({ type: ACTION_TYPES.SET_STATUS_MESSAGE, payload: { statusMessage: text } });
-        setTimeout(() => {
-            dispatch({ type: ACTION_TYPES.SET_STATUS_MESSAGE, payload: { statusMessage: '' } });
-        }, 15000);
-    }
-
-    const _setErrorMessage = (text) => {
-        dispatch({ type: ACTION_TYPES.SET_ERROR_MESSAGE, payload: { errorMessage: text } });
-        setTimeout(() => {
-            dispatch({ type: ACTION_TYPES.SET_ERROR_MESSAGE, payload: { errorMessage: '' } });
-        }, 15000);
-    }
-
     const initEditor = async () => {
 
         let isReadOnly = false;
 
         const contentOfResource = await axios.get(`http://localhost:8080/resource/api/v1/resources/${userName}/resource/${resourceName}`)
-            .then((response) => response.data);
+            .then((response) => response.data)
+            .catch(() => {
+                setErrorMessage('Resource not found', dispatch);
+                navigate(`/resources/${userName}`);
+            });
 
         if (contentOfResource) {
             setEditorData(() => contentOfResource);
         }
 
-        if (!isLoggedIn || loginOfLoggedInUser !== userName) {
+        if (!isAllowedToEdit()) {
             isReadOnly = true;
         }
 
@@ -95,7 +86,15 @@ const EditResource = () => {
         }
     }, []);
 
+    const isAllowedToEdit = () => isLoggedIn && loginOfLoggedInUser === userName;
+
     const saveTheResourceToDatabase = () => {
+        // eslint-disable-next-line no-restricted-globals
+        let confirmAction = confirm('Are you sure to save the resource?');
+        if (!confirmAction) {
+            return;
+        }
+
         axios.put(`http://localhost:8080/resource/api/v1/resources/${userName}/resource/${resourceName}`,
             JSON.stringify(editorData),
             {
@@ -105,21 +104,73 @@ const EditResource = () => {
                 },
             })
             .then((_response) => {
-                _setStatusMessage('Saved successfully.');
+                setStatusMessage('Saved successfully.', dispatch);
             })
-            .catch((_axiosError) => {
-                _setErrorMessage('Something went wrong.');
+            .catch((axiosError) => {
+                if (!axiosError.response) {
+                    setErrorMessage('Unexpected error happened', dispatch);
+                }
+                if (axiosError.response.status === 401) {
+                    setErrorMessage('Unauthorized user. Please log in to be able to create resources.', dispatch);
+                    navigate('/');
+                } else if (axiosError.response.status === 403) {
+                    setErrorMessage('You can not create resources for other people except yourself!', dispatch);
+                } else if (axiosError.response.status === 409) {
+                    setErrorMessage('You already have a resource with that name.', dispatch);
+                } else {
+                    setErrorMessage('Unexpected error happened', dispatch);
+                }
+            });
+    }
+
+    const deleteResourceFromDatabase = () => {
+        // eslint-disable-next-line no-restricted-globals
+        let confirmAction = confirm('Are you sure You want to delete the resource?');
+        if (!confirmAction) {
+            return;
+        }
+
+        axios.delete(`http://localhost:8080/resource/api/v1/resources/${userName}/resource/${resourceName}`,
+            {
+                headers: { 'Authorization': `Bearer ${authToken}` },
+            })
+            .then((_response) => {
+                setStatusMessage('Deleted successfully.', dispatch);
+                navigate(`/resources/${userName}`);
+            })
+            .catch((axiosError) => {
+                if (!axiosError.response) {
+                    setErrorMessage('Unexpected error happened', dispatch);
+                }
+                if (axiosError.response.status === 401) {
+                    setErrorMessage('Unauthorized user. Please log in to be able to delete resources.', dispatch);
+                    navigate('/');
+                } else if (axiosError.response.status === 403) {
+                    setErrorMessage('You can not delete  resources for other people except yourself!', dispatch);
+                } else if (axiosError.response.status === 409) {
+                    setErrorMessage('You already have a resource with that name.', dispatch);
+                } else {
+                    setErrorMessage('Unexpected error happened', dispatch);
+                }
             });
     }
 
 
-
     return (
-        <React.Fragment>
+        <Fragment>
             <h2>Resource {resourceName} of user {userName}</h2>
-            <button onClick={() => saveTheResourceToDatabase()}>Save the resource </button>
+            {
+                isAllowedToEdit()
+                    ? <button onClick={() => saveTheResourceToDatabase()}>Save the resource</button>
+                    : ''
+            }
+            {
+                isAllowedToEdit()
+                    ? <button onClick={() => deleteResourceFromDatabase()}>Delete the resource</button>
+                    : ''
+            }
             <div id="editorjs_id"></div>
-        </React.Fragment>
+        </Fragment>
     );
 }
 

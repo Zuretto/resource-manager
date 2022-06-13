@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { ACTION_TYPES } from '../state/reducer';
 import { createRef } from 'react';
+import { setErrorMessage } from "../utils/utils";
 
 const LoginForm = () => {
 
@@ -12,13 +13,6 @@ const LoginForm = () => {
 
     const loginInputRef = createRef();
     const passwordInputRef = createRef();
-
-    const _setErrorMessage = (text) => {
-        dispatch({ type: ACTION_TYPES.SET_ERROR_MESSAGE, payload: { errorMessage: text } });
-        setTimeout(() => {
-            dispatch({ type: ACTION_TYPES.SET_ERROR_MESSAGE, payload: { errorMessage: '' } });
-        }, 15000);
-    }
 
     const performLogin = () => {
         const userName = loginInputRef.current.value;
@@ -39,7 +33,7 @@ const LoginForm = () => {
                 navigate(`/resources/${userName}`);
             })
             .catch((_axiosError) => {
-                _setErrorMessage('Wrong credentials.');
+                setErrorMessage('Wrong credentials.', dispatch);
             });
     };
 

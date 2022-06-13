@@ -35,7 +35,7 @@ function App() {
 
                     <Route path="/resources/:userName" element={<ResourcesList/>}/>
                     <Route path="/resources/:userName/create-resource" element={<CreateResourceForm/>}/>
-                    <Route path="/resources/:userName/resource/:resourceName/edit" element={<EditResource/>}/>
+                    <Route path="/resources/:userName/resource/:resourceName" element={<EditResource/>}/>
                 </Routes>
             </BrowserRouter>
         </div>

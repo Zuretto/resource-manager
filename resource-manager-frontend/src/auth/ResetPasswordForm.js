@@ -2,8 +2,8 @@ import './AuthStyles.css';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
-import { ACTION_TYPES } from '../state/reducer';
 import { createRef } from 'react';
+import { setErrorMessage, setStatusMessage } from "../utils/utils";
 
 
 const ResetPasswordForm = () => {
@@ -19,20 +19,6 @@ const ResetPasswordForm = () => {
 
     const _isTextValid = (text) => text && !/\s/.test(text);
 
-    const _setStatusMessage = (text) => {
-        dispatch({ type: ACTION_TYPES.SET_STATUS_MESSAGE, payload: { statusMessage: text } });
-        setTimeout(() => {
-            dispatch({ type: ACTION_TYPES.SET_STATUS_MESSAGE, payload: { statusMessage: '' } });
-        }, 15000);
-    }
-
-    const _setErrorMessage = (text) => {
-        dispatch({ type: ACTION_TYPES.SET_ERROR_MESSAGE, payload: { errorMessage: text } });
-        setTimeout(() => {
-            dispatch({ type: ACTION_TYPES.SET_ERROR_MESSAGE, payload: { errorMessage: '' } });
-        }, 15000);
-    }
-
     const performRegister = () => {
         const userName = loginInputRef.current.value;
         const password = passwordInputRef.current.value;
@@ -40,7 +26,7 @@ const ResetPasswordForm = () => {
         const favoriteCharacter = favoriteCharacterInputRef.current.value;
 
         if (!_isTextValid(userName) || !password || !_isTextValid(email) || !favoriteCharacter) {
-            _setErrorMessage('Invalid data - please fill all input fields and do not use whitespaces on userName or email.')
+            setErrorMessage('Invalid data - please fill all input fields and do not use whitespaces on userName or email.', dispatch)
             return;
         }
 
@@ -54,11 +40,11 @@ const ResetPasswordForm = () => {
                 },
             })
             .then((_response) => {
-                _setStatusMessage('Password reset successfully.');
+                setStatusMessage('Password reset successfully.', dispatch);
                 navigate(`/`);
             })
             .catch((_axiosError) => {
-                _setErrorMessage('Login, email and favorite character does not match.');
+                setErrorMessage('Login, email and favorite character does not match.', dispatch);
             });
     };
 
